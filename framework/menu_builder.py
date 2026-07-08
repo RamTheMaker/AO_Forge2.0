@@ -3,6 +3,7 @@ from pathlib import Path
 
 from . import config
 from . import tool_executor
+from . import menu_registry
 
 # ==========================================================
 # Build Menu Tree
@@ -111,6 +112,11 @@ def build_top_menu(gizmos):
     python_menu = top_menu.addMenu("Python")
     
     toolsets_menu = top_menu.addMenu("Toolsets")
+
+    menu_registry.gizmos_menu = gizmos_menu
+    menu_registry.python_menu = python_menu
+    menu_registry.toolsets_menu = toolsets_menu
+    menu_registry.nodes_menu = nuke.menu("Nodes")
 
     
     # ------------------------------------------------------
