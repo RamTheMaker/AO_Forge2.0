@@ -61,6 +61,11 @@ def get_project_root():
         )
 
         return None
+    
+    print("=" * 60)
+    print("AO_Controller :", repr(controller["project_root"].value()))
+    print("Returned Root :", repr(project_root))
+    print("=" * 60)
 
     return project_root
 
@@ -71,28 +76,30 @@ def get_paths():
     if not project_root:
         return None
 
-    cache_dir = os.path.join(
-        project_root,
-        "comp",
-        "AO_Cache",
-        "ImageEdit",
-        "Flux2Klein"
+    project_root = Path(project_root)
+
+    cache_dir = (
+        project_root
+        / "comp"
+        / "AO_Cache"
+        / "ImageEdit"
+        / "Flux2Klein"
     )
 
-    output_dir = os.path.join(
-        project_root,
-        "ai",
-        "ImageEdit",
-        "Flux2Klein"
+    output_dir = (
+        project_root
+        / "ai"
+        / "ImageEdit"
+        / "Flux2Klein"
     )
 
-    os.makedirs(
-        cache_dir,
+    cache_dir.mkdir(
+        parents=True,
         exist_ok=True
     )
 
-    os.makedirs(
-        output_dir,
+    output_dir.mkdir(
+        parents=True,
         exist_ok=True
     )
 
@@ -102,18 +109,10 @@ def get_paths():
 
         "output_dir": output_dir,
 
-        "input_png": os.path.join(
-            cache_dir,
-            "input.png"
-        ),
+        "input_png": cache_dir / "input.png",
 
-        "cache_png": os.path.join(
-            cache_dir,
-            "cache.png"
-        )
+        "cache_png": cache_dir / "cache.png"
     }
-
-
 
 def get_next_output_path():
 
@@ -147,9 +146,10 @@ def get_next_output_path():
 
     next_version = highest + 1
 
-    return os.path.join(
-        output_dir,
-        f"output_v{next_version:04d}.png"
+    
+    return (
+        output_dir
+        / f"output_v{next_version:04d}.png"
     )
 
 
@@ -173,6 +173,38 @@ def hide_expression_arrows():
 
     except:
         pass
+    
+def update_internal_paths(node):
+
+    paths = get_paths()
+
+    if not paths:
+        return False
+
+    node.begin()
+
+    try:
+
+        write_node = nuke.toNode("WRITE_INPUT")
+        read_node = nuke.toNode("READ_CACHE")
+
+        if write_node:
+
+            write_node["file"].fromUserText(
+                paths["input_png"].as_posix()
+            )
+
+        if read_node:
+
+            read_node["file"].fromUserText(
+                paths["cache_png"].as_posix()
+            )
+
+    finally:
+
+        node.end()
+
+    return True
 
 def render_input_png(node):
 
@@ -188,12 +220,15 @@ def render_input_png(node):
 
     if not paths:
         return False
+    
+    if not update_internal_paths(node):
+        return False
 
     input_png = paths["input_png"]
 
     print("=" * 60)
-    print("INPUT PNG :", input_png)
-    print("EXISTS    :", os.path.exists(os.path.dirname(input_png)))
+    print("INPUT PNG :", input_png.as_posix())
+    print("EXISTS    :", input_png.parent.exists())
     print("=" * 60)
 
     node.begin()
@@ -231,9 +266,9 @@ def render_input_png(node):
     while True:
 
         if (
-            os.path.exists(input_png)
+            input_png.exists()
             and
-            os.path.getsize(input_png) > 1000
+            input_png.stat().st_size > 1000
         ):
             return True
 
@@ -305,7 +340,8 @@ def update_workflow_json(data):
 
     with open(
         WORKFLOW_JSON,
-        "r"
+        "r",
+        encoding="utf-8"
     ) as f:
 
         workflow = json.load(f)
@@ -350,26 +386,28 @@ def update_workflow_json(data):
     # Input PNG
     # -----------------------
 
-    workflow["412"]["inputs"][
-        "value"
-    ] = data["input_png"]
+    workflow["412"]["inputs"]["value"] = (
+        data["input_png"].as_posix()
+    )
 
     # -----------------------
     # Cache PNG
     # -----------------------
 
-    workflow["422"]["inputs"][
-        "value"
-    ] = data["cache_png"]
+    workflow["422"]["inputs"]["value"] = (
+        data["cache_png"].as_posix()
+    )
 
-    debug_json = os.path.join(
-        data["input_png"].rsplit("/", 1)[0],
-        "workflow_debug.json"
+    
+    debug_json = (
+        data["input_png"].parent
+        / "workflow_debug.json"
     )
     
     with open(
-            debug_json,
-            "w"
+        debug_json,
+        "w",
+        encoding="utf-8"
     ) as f:
     
         json.dump(
@@ -486,9 +524,9 @@ def wait_for_cache(
     while True:
 
         if (
-            os.path.exists(cache_png)
+            cache_png.exists()
             and
-            os.path.getsize(cache_png) > 1000
+            cache_png.stat().st_size > 1000
         ):
             return True
 
@@ -791,8 +829,8 @@ def save():
     
     read = nuke.nodes.Read()
     
-    read["file"].setValue(
-        output_path
+    read["file"].fromUserText(
+        output_path.as_posix()
     )
     
     read["reload"].execute()
@@ -1310,8 +1348,8 @@ def create_node():
             paths = get_paths()
             
             if paths:
-                write_node["file"].setValue(
-                    paths["input_png"]
+                write_node["file"].fromUserText(
+                    Path(paths["input_png"]).as_posix()
                 )
 
             # ---------------------------
@@ -1324,8 +1362,8 @@ def create_node():
             
             if paths:
             
-                read_cache["file"].setValue(
-                    paths["cache_png"]
+                read_cache["file"].fromUserText(
+                    Path(paths["cache_png"]).as_posix()
                 )
             
             read_cache.setXpos(250)

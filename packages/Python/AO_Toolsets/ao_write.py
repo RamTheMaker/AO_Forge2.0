@@ -2,9 +2,19 @@ import nuke
 import os
 import re
 import shutil
+from pathlib import Path
 
 LINK_ARROWS_HIDDEN = False
 
+def build_path(*parts):
+    """
+    AO_Forge Path Builder
+
+    Always returns POSIX paths.
+    Compatible with Windows and Linux.
+    """
+
+    return Path(*parts).as_posix()
 
 
 def _update_mov_codec(node):
@@ -253,6 +263,11 @@ def _update_task_ui(node):
     task = node["task"].value()
     mov_type = node["mov_type"].value()  
     project_root = node["project_root_info"].value()
+
+
+    print("=" * 60)
+    print("PROJECT ROOT :", repr(project_root))
+    print("=" * 60)
 
     if task == "Denoise":
     
@@ -793,24 +808,21 @@ def _update_task_ui(node):
 
     node["real_path"].setValue(path)
 
-    display_path = path
+    from pathlib import Path
     
-    if project_root and path.startswith(project_root):
+    try:
     
-        display_path = path.replace(
-            project_root + "/",
-            ""
+        display_path = str(
+            Path(path).relative_to(
+                Path(project_root)
+            )
         )
     
-        project_name = os.path.basename(
-            project_root
-        )
+    except ValueError:
     
-        display_path = (
-            project_name +
-            "/" +
-            display_path
-        )
+        display_path = path
+    
+    display_path = display_path.replace("\\", "/")
     
     node["resolved_path"].setValue(
         display_path
@@ -873,11 +885,15 @@ def _update_internal_write(node):
 
         path = node["real_path"].value()
 
+        print("=" * 60)
+        print("REAL PATH :", repr(path))
+        print("=" * 60)
+
         filename = node["render_file"].value()
 
-        full_path = (
-            path +
-            "/" +
+        
+        full_path = build_path(
+            path,
             filename
         )
         
@@ -921,9 +937,14 @@ def _update_internal_write(node):
                 "exr"
             )
         
-        write_node["file"].setValue(
+        write_node["file"].fromUserText(
             full_path
         )
+
+        print("=" * 60)
+        print("Write File Knob :", repr(write_node["file"].value()))
+        print("Write Evaluate  :", repr(write_node["file"].evaluate()))
+        print("=" * 60)
 
         node.end()
 
@@ -1156,11 +1177,10 @@ def _render(
 
         task = node["task"].value()
 
+        
         full_path = (
-            path +
-            "/" +
-            filename
-        )
+            Path(path) / filename
+        ).as_posix()
 
         if (
             first_frame is None
@@ -1279,18 +1299,70 @@ def _render(
         )
 
         node.begin()
-
+        
         write_node = nuke.toNode(
             "Internal_Write"
         )
-
+        
         node.end()
-
+        
+        if write_node is None:
+        
+            nuke.message(
+                "Internal_Write node not found."
+            )
+        
+            return
+        
+        print("\n" + "=" * 70)
+        print("AO_Write Debug")
+        print("=" * 70)
+        
+        print("Task           :", task)
+        print("Output Folder  :", path)
+        print("Render File    :", filename)
+        print("Full Path      :", full_path)
+        
+        print()
+        
+        print("Write Node     :", write_node.name())
+        print("Write File     :", write_node["file"].value())
+        print("File Type      :", write_node["file_type"].value())
+        print("Channels       :", write_node["channels"].value())
+        print("Colorspace     :", write_node["colorspace"].value())
+        
+        print()
+        
+        print(
+            "Folder Exists  :",
+            os.path.exists(path)
+        )
+        
+        print("=" * 70)
+        
+        print("Write disabled :", write_node["disable"].value())
+        print("Input connected :", write_node.input(0))
+        
         nuke.execute(
             write_node,
             first_frame,
             last_frame
         )
+        
+        print()
+        
+        print("Render Finished")
+        
+        if os.path.exists(path):
+        
+            print(
+                "Files Written:",
+                os.listdir(path)
+            )
+        
+        else:
+        
+            print("Output folder does not exist.")
 
         
         read_node = nuke.nodes.Read()
@@ -1670,6 +1742,8 @@ def _update_channels(node):
 
         node.end()
 
+
+
     except Exception as e:
 
         try:
@@ -1743,6 +1817,7 @@ def _refresh_output_transforms(node):
         current_internal = colorspace_knob.value()
 
         node.end()
+        
 
         display_values = []
 
@@ -2010,6 +2085,8 @@ def create_ao_write():
     write_node = nuke.nodes.Write(
         name="Internal_Write"
     )
+
+    write_node["create_directories"].setValue(True)
 
     write_node.setInput(
         0,

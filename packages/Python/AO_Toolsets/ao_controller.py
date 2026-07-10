@@ -1,6 +1,10 @@
 import os
 import re
 import nuke
+from pathlib import Path
+from pathlib import PureWindowsPath, PurePosixPath
+from PySide2 import QtWidgets
+
 
 
 FOLDER_STRUCTURE = [
@@ -111,10 +115,24 @@ def _knob_changed():
             )
         )
 
+
 def _normalize_path(path):
+    """
+    AO_Forge path normalization.
+
+    - Windows -> G:/Project/Shot
+    - Linux   -> /Shares/Project/Shot
+    """
+
     if not path:
         return ""
-    return os.path.normpath(path)
+
+    path = path.strip()
+
+    if os.name == "nt":
+        return PureWindowsPath(path).as_posix().rstrip("/")
+
+    return PurePosixPath(path).as_posix().rstrip("/")
 
 
 def _next_script_version(script_dir, shot_name):
@@ -149,13 +167,20 @@ def _set_script_path(node, path):
 
 
 def _browse_project_root():
-    node = nuke.thisNode()
-    selected = nuke.getFilename("Select Project Root")
 
-    if selected:
-        node["project_root"].setValue(
-            _normalize_path(selected)
-        )
+    node = nuke.thisNode()
+
+    selected = QtWidgets.QFileDialog.getExistingDirectory(
+        None,
+        "Select Project Root"
+    )
+
+    if not selected:
+        return
+
+    normalized = _normalize_path(selected)
+
+    node["project_root"].setValue(normalized)
 
 def _create_shot_structure():
     node = nuke.thisNode()
@@ -194,17 +219,24 @@ def _create_shot_structure():
         nuke.message("Invalid Project Root.")
         return
 
-    comp_scripts = os.path.join(
-        project_root,
-        "comp",
-        "scripts"
+    
+    comp_scripts = (
+        Path(project_root)
+        / "comp"
+        / "scripts"
     )
 
     structure_exists = os.path.exists(comp_scripts)
 
     for folder in FOLDER_STRUCTURE:
-        full_path = os.path.join(project_root, folder)
-        os.makedirs(full_path, exist_ok=True)
+        full_path = (
+            Path(project_root)
+            / folder
+        )
+        full_path.mkdir(
+            parents=True,
+            exist_ok=True
+        )
 
     save_path = _next_script_version(
         comp_scripts,
