@@ -5,6 +5,8 @@ from . import config
 from . import tool_executor
 from . import menu_registry
 
+
+
 # ==========================================================
 # Build Menu Tree
 # ==========================================================
@@ -107,12 +109,16 @@ def build_top_menu(gizmos):
     # Package Types
     # ------------------------------------------------------
 
+    ai_menu = top_menu.addMenu("AI")
+    
     gizmos_menu = top_menu.addMenu("Gizmos")
     
     python_menu = top_menu.addMenu("Python")
     
     toolsets_menu = top_menu.addMenu("Toolsets")
 
+    
+    menu_registry.ai_menu = ai_menu
     menu_registry.gizmos_menu = gizmos_menu
     menu_registry.python_menu = python_menu
     menu_registry.toolsets_menu = toolsets_menu

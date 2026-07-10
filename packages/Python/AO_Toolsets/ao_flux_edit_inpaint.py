@@ -6,13 +6,14 @@ import json
 import urllib.request
 import random
 import shutil
+from pathlib import Path
+
+THIS_DIR = Path(__file__).resolve().parent
 
 WORKFLOW_JSON = (
-    "/Shares/Y/SHOTGUNPRO/system_backup/"
-    "paint_render/_daily_renders/"
-    "Ramamurthy/AO/AO_Forge/"
-    "Workflows/ImageEdit/"
-    "Flux2Klein_Edit_Inpaint.json"
+    THIS_DIR
+    / "workflows"
+    / "Flux2Klein_Edit_Inpaint.json"
 )
 
 COMFY_SERVERS = {
@@ -189,6 +190,11 @@ def render_input_png(node):
         return False
 
     input_png = paths["input_png"]
+
+    print("=" * 60)
+    print("INPUT PNG :", input_png)
+    print("EXISTS    :", os.path.exists(os.path.dirname(input_png)))
+    print("=" * 60)
 
     node.begin()
 
@@ -1032,9 +1038,9 @@ def create_node():
     
 
     random_btn.setCommand(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.random_seed()"
     )
 
@@ -1053,9 +1059,9 @@ def create_node():
 
 
     plus_btn.setCommand(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.increment_seed()"
     )
 
@@ -1071,9 +1077,9 @@ def create_node():
     )
 
     minus_btn.setCommand(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.decrement_seed()"
     )
 
@@ -1098,9 +1104,9 @@ def create_node():
 
     
     generate_btn.setCommand(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.generate()"
     )
 
@@ -1120,9 +1126,9 @@ def create_node():
     )
     
     reload_btn.setCommand(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.reload_cache()"
     )
     
@@ -1144,9 +1150,9 @@ def create_node():
     )
 
     save_btn.setCommand(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.save()"
     )
    
@@ -1236,9 +1242,9 @@ def create_node():
     )
 
     node["knobChanged"].setValue(
-        "import scripts.tools.AO_AI.ImageEdit.ao_flux_edit_inpaint as ai;"
-        "import importlib;"
-        "importlib.reload(ai);"
+        "import ao_flux_edit_inpaint as ai\n"
+        "import importlib\n"
+        "importlib.reload(ai)\n"
         "ai.knob_changed()"
     )
 

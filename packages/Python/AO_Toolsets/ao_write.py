@@ -2106,7 +2106,7 @@ def create_ao_write():
     )
     
     open_folder_btn.setCommand(
-        "import scripts.tools.ao_write as ao_write\n"
+        "import ao_write\n"
         "ao_write._open_task_folder(nuke.thisNode())"
     )
     
@@ -2469,7 +2469,7 @@ def create_ao_write():
     )
 
     render_btn.setCommand(
-        "import scripts.tools.ao_write as ao_write\n"
+        "import ao_write\n"
         "ao_write._render(nuke.thisNode())"
     )
     
@@ -2479,7 +2479,7 @@ def create_ao_write():
     )
 
     move_to_final_btn.setCommand(
-        "import scripts.tools.ao_write as ao_write\n"
+        "import ao_write\n"
         "ao_write._move_to_final(nuke.thisNode())"
     )
 
@@ -2493,7 +2493,7 @@ def create_ao_write():
     )
     
     render_range_btn.setCommand(
-        "import scripts.tools.ao_write as ao_write\n"
+        "import ao_write\n"
         "ao_write._render_range(nuke.thisNode())"
     )
     
@@ -2539,10 +2539,8 @@ def create_ao_write():
 
 
     group["knobChanged"].setValue(
-        "import scripts.tools.ao_write as ao_write\n"
+        "import ao_write\n"
         "ao_write._knob_changed()"
-        
-        
     )
 
     return group

@@ -24,3 +24,13 @@ VERSION = "2.0"
 # ==========================================================
 
 DEBUG = False
+
+from pathlib import Path
+
+# ==========================================================
+# AO_Forge Root
+# ==========================================================
+
+FRAMEWORK_DIR = Path(__file__).resolve().parent
+
+AO_FORGE_ROOT = FRAMEWORK_DIR.parent

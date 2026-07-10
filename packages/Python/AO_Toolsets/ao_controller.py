@@ -516,7 +516,7 @@ def create_controller():
     )
 
     browse.setCommand(
-        "import scripts.tools.ao_controller as ao; "
+        "import ao_controller as ao; "
         "ao._browse_project_root()"
     )
 
@@ -607,7 +607,7 @@ def create_controller():
     )
     
     match_format_btn.setCommand(
-        "import scripts.tools.ao_controller as ao\n"
+        "import ao_controller as ao\n"
         "ao._match_selected()"
     )
     
@@ -656,8 +656,8 @@ def create_controller():
     
     
     create_btn.setCommand(
-    "import scripts.tools.ao_controller as ao; "
-    "ao._create_shot_structure()"
+        "import ao_controller as ao; "
+        "ao._create_shot_structure()"
     )
 
     create_btn.setFlag(
@@ -749,8 +749,8 @@ def create_controller():
     node.addKnob(publish_group_end)
 
     node["knobChanged"].setValue(
-    "import scripts.tools.ao_controller as ao\n"
-    "ao._knob_changed()"
+        "import ao_controller as ao\n"
+        "ao._knob_changed()"
     )
 
     return node

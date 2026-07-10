@@ -1,13 +1,6 @@
 import ao_controller
-import ao_write
+import ao_flux_edit_inpaint
 import ao_matte
-
-from framework import menu_registry
-
-python_menu = menu_registry.python_menu
-gizmo_menu = menu_registry.gizmos_menu
-
-import ao_controller
 import ao_write
 
 from framework import menu_registry
@@ -23,6 +16,7 @@ menu_registry.register_python_tool(
 
 )
 
+
 menu_registry.register_python_tool(
 
     menu_path="Rendering/AO Write",
@@ -33,8 +27,20 @@ menu_registry.register_python_tool(
 
 )
 
-gizmo_menu.addCommand(
-    "AI/AO Matte",
-    ao_matte.create_node,
+
+menu_registry.register_ai_tool(
+
+    menu_path="AO Matte",
+
+    callback=ao_matte.create_node,
+
 )
 
+
+menu_registry.register_ai_tool(
+
+    menu_path="AO Flux Inpaint",
+
+    callback=ao_flux_edit_inpaint.create_node,
+
+)

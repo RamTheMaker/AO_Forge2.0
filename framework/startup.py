@@ -4,25 +4,31 @@ from . import knob_defaults
 from . import package_manager
 from . import menu_builder
 from . import config
+from . import security
 from . import python_loader
 
 
 
 
+
 def initialize():
-    """
-    AO_Forge Startup
-    """
 
     print("-" * 60)
     print(f"{config.TOOLKIT_NAME} v{config.VERSION}")
     print("Initializing...")
     print("-" * 60)
 
+    # ------------------------------------------------------
+    # License Validation
+    # ------------------------------------------------------
+
+    if not security.validate():
+        return
+
     knob_defaults.initialize()
-    
+
     discovered = package_manager.load_packages()
-    
+
     menu_builder.build_menus(
         discovered["gizmos"]
     )

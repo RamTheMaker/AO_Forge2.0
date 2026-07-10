@@ -1,0 +1,197 @@
+{
+  "4": {
+    "inputs": {
+      "channel": "red",
+      "image": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "ImageToMask",
+    "_meta": {
+      "title": "Convert Image to Mask"
+    }
+  },
+  "5": {
+    "inputs": {
+      "value": "/Shares/Y/studio/projects/wtj/sequences/SC_14B/WTTJ_SC_14B_0020/CMP/work/ram/WTTJ_SC_14B_0020/ai/workflows/HeadSwap/First_Frame_alpha_v2.png"
+    },
+    "class_type": "easy string",
+    "_meta": {
+      "title": "String"
+    }
+  },
+  "6": {
+    "inputs": {
+      "warmup_frames": 10,
+      "erode_kernel": 10,
+      "dilate_kernel": 10,
+      "bg_red": 120,
+      "bg_green": 255,
+      "bg_blue": 155,
+      "video_frames": [
+        "11",
+        0
+      ],
+      "mask": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "MatAnyoneVideoMatting",
+    "_meta": {
+      "title": "MatAnyone Video Kytra"
+    }
+  },
+  "8": {
+    "inputs": {
+      "file_path": [
+        "9",
+        0
+      ],
+      "frame_start": 1001,
+      "file_type": "png",
+      "bit_depth": "8",
+      "compression": "none",
+      "frame_padding": 4,
+      "auto_sequence": false,
+      "create_directories": true,
+      "colorspace": "raw",
+      "show_preview": true,
+      "image": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "NukeWrite",
+    "_meta": {
+      "title": "Nuke Write"
+    }
+  },
+  "9": {
+    "inputs": {
+      "value": "/Shares/Y/studio/projects/wtj/sequences/SC_14B/WTTJ_SC_14B_0020/CMP/work/ram/WTTJ_SC_14B_0020/ai/workflows/HeadSwap/First_Frame_alpha_v2.png"
+    },
+    "class_type": "easy string",
+    "_meta": {
+      "title": "String"
+    }
+  },
+  "10": {
+    "inputs": {
+      "loop_id": "ForLoop_1",
+      "fallback": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "RecallString",
+    "_meta": {
+      "title": "Recall String"
+    }
+  },
+  "11": {
+    "inputs": {
+      "directory": [
+        "12",
+        0
+      ],
+      "image_load_cap": 0,
+      "skip_first_images": 0,
+      "select_every_nth": 1
+    },
+    "class_type": "VHS_LoadImagesPath",
+    "_meta": {
+      "title": "Load Images (Path) 🎥🅥🅗🅢"
+    }
+  },
+  "12": {
+    "inputs": {
+      "loop_id": "ForLoop_1",
+      "fallback": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "RecallString",
+    "_meta": {
+      "title": "Recall String"
+    }
+  },
+  "13": {
+    "inputs": {
+      "value": "/tuxhome/ramamurthy.r/.nuke/RFX_Tools/workflow/RFX_VideoEdit/cache/alpha"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "alpha"
+    }
+  },
+  "14": {
+    "inputs": {
+      "image": [
+        "10",
+        0
+      ],
+      "custom_width": 0,
+      "custom_height": 0
+    },
+    "class_type": "VHS_LoadImagePath",
+    "_meta": {
+      "title": "Load Image (Path) 🎥🅥🅗🅢"
+    }
+  },
+  "15": {
+    "inputs": {
+      "base_model_path": "checkpoints/stabilityai/stable-video-diffusion-img2vid-xt",
+      "unet_checkpoint_path": "checkpoints/VideoMaMa",
+      "precision": "fp16",
+      "enable_model_cpu_offload": true,
+      "vae_encode_chunk_size": 4,
+      "attention_mode": "auto",
+      "enable_vae_tiling": false,
+      "enable_vae_slicing": true
+    },
+    "class_type": "VideoMaMaPipelineLoader",
+    "_meta": {
+      "title": "VideoMaMa Pipeline Loader"
+    }
+  },
+  "16": {
+    "inputs": {
+      "seed": 534438828509511,
+      "max_resolution": 1024,
+      "fps": 7,
+      "motion_bucket_id": 127,
+      "noise_aug_strength": 0,
+      "pipeline": [
+        "15",
+        0
+      ],
+      "images": [
+        "11",
+        0
+      ],
+      "masks": [
+        "6",
+        1
+      ]
+    },
+    "class_type": "VideoMaMaSampler",
+    "_meta": {
+      "title": "VideoMaMa Sampler"
+    }
+  },
+  "17": {
+    "inputs": {
+      "mask": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "MaskToImage",
+    "_meta": {
+      "title": "Convert Mask to Image"
+    }
+  }
+}
