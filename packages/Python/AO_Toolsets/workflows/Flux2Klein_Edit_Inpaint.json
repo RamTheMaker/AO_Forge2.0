@@ -141,7 +141,7 @@
         0
       ],
       "inpainted_image": [
-        "427",
+        "431",
         0
       ]
     },
@@ -205,7 +205,7 @@
   },
   "388": {
     "inputs": {
-      "unet_name": "flux-2-klein-9b.safetensors",
+      "unet_name": "flux2\\flux-2-klein-9b-fp8mixed.safetensors",
       "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
@@ -215,7 +215,7 @@
   },
   "389": {
     "inputs": {
-      "clip_name": "qwen_3_8b.safetensors",
+      "clip_name": "qwen_3_8b_fp8mixed.safetensors",
       "type": "flux2",
       "device": "default"
     },
@@ -304,7 +304,7 @@
   },
   "424": {
     "inputs": {
-      "lora_name": "Flux2-Klein-9B-consistency-V2.safetensors",
+      "lora_name": "Klein-consistency.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -319,28 +319,6 @@
     "class_type": "LoraLoader",
     "_meta": {
       "title": "Load LoRA (Model and CLIP)"
-    }
-  },
-  "427": {
-    "inputs": {
-      "method": "mkl_neutral",
-      "blend_factor": 1,
-      "image_ref": [
-        "387",
-        1
-      ],
-      "image_gen": [
-        "373",
-        0
-      ],
-      "ignore_mask": [
-        "419",
-        1
-      ]
-    },
-    "class_type": "SmartColorMatch",
-    "_meta": {
-      "title": "Smart Color Match (Fixed)"
     }
   },
   "428": {
@@ -383,6 +361,28 @@
     "class_type": "PreviewImage",
     "_meta": {
       "title": "Preview Image"
+    }
+  },
+  "431": {
+    "inputs": {
+      "method": "mkl_neutral",
+      "blend_factor": 1,
+      "image_ref": [
+        "419",
+        0
+      ],
+      "image_gen": [
+        "373",
+        0
+      ],
+      "ignore_mask": [
+        "419",
+        1
+      ]
+    },
+    "class_type": "SmartColorMatch",
+    "_meta": {
+      "title": "Smart Color Match (Fixed)"
     }
   }
 }
